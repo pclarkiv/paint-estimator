@@ -1,0 +1,16 @@
+{
+    "name": "@paint-estimator/common",
+    "version": "1.0.0",
+    "private": true,
+    "main": "src/index.js",
+    "scripts": {
+      "test": "jest",
+      "lint": "eslint ."
+    },
+    "dependencies": {
+      "zod": "^3.22.4"
+    },
+    "devDependencies": {
+      "jest": "^29.7.0"
+    }
+  }
