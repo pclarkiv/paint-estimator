@@ -1,4 +1,6 @@
 // packages/server/src/models/Treatment.js
+const mongoose = require('mongoose');
+
 const treatmentSchema = new mongoose.Schema({
     surfaceId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -23,4 +25,6 @@ const treatmentSchema = new mongoose.Schema({
       type: Number,
       required: true
     }
-  });
+});
+
+module.exports = mongoose.model('Treatment', treatmentSchema);

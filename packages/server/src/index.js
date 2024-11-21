@@ -5,12 +5,10 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const connectDB = require('./config/database');
 const logger = require('./config/logger');
+const apiRoutes = require('./routes/api');
 
 // Load environment variables
 dotenv.config();
-
-// Connect to MongoDB
-connectDB();
 
 const app = express();
 
@@ -18,29 +16,40 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// API Routes
+app.use('/api', apiRoutes);
+
 // Health check route
 app.get('/health', (req, res) => {
   res.status(200).json({ status: 'ok' });
 });
 
-// Basic error handler
+// Error handling middleware
 app.use((err, req, res, next) => {
   logger.error(err.stack);
   res.status(500).json({ 
+    success: false,
     message: 'Something broke!',
-    error: process.env.NODE_ENV === 'development' ? err.message : {}
+    error: process.env.NODE_ENV === 'development' ? err.message : undefined
   });
 });
 
-const PORT = process.env.PORT || 5000;
-
-app.listen(PORT, () => {
-  logger.info(`Server is running on port ${PORT}`);
+// Handle 404 errors
+app.use((req, res) => {
+  res.status(404).json({
+    success: false,
+    message: 'Route not found'
+  });
 });
 
-// Handle unhandled promise rejections
-process.on('unhandledRejection', (err) => {
-  logger.error('Unhandled Rejection:', err);
-  // Close server & exit process
-  server.close(() => process.exit(1));
-});
+// Only connect to database and start server if we're not in a test environment
+if (process.env.NODE_ENV !== 'test') {
+  const PORT = process.env.PORT || 5000;
+  connectDB().then(() => {
+    app.listen(PORT, () => {
+      logger.info(`Server is running on port ${PORT}`);
+    });
+  });
+}
+
+module.exports = app; // Export for testing

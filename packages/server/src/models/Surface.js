@@ -1,4 +1,6 @@
 // packages/server/src/models/Surface.js
+const mongoose = require('mongoose');
+
 const surfaceSchema = new mongoose.Schema({
     projectId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -28,4 +30,6 @@ const surfaceSchema = new mongoose.Schema({
     adjacentAreas: [{
       type: String  // Store adjacent area numbers
     }]
-  });
+});
+
+module.exports = mongoose.model('Surface', surfaceSchema);

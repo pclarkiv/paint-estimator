@@ -5,17 +5,16 @@ const logger = require('./logger');
 
 const connectDB = async () => {
   try {
-    const conn = await mongoose.connect(process.env.MONGODB_URI, {
-      // These are included by default in newer versions of mongoose
-      // but explicitly setting them is good practice
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-
+    const conn = await mongoose.connect(process.env.MONGODB_URI);
     logger.info(`MongoDB Connected: ${conn.connection.host}`);
+    return conn;
   } catch (error) {
     logger.error(`Error: ${error.message}`);
-    process.exit(1);
+    // Don't exit the process here when testing
+    if (process.env.NODE_ENV !== 'test') {
+      process.exit(1);
+    }
+    throw error;
   }
 };
 
